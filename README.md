@@ -1,5 +1,3 @@
 Run:
 
-```
-  ./install
-```
+    ./install
