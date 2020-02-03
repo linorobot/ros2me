@@ -1,0 +1,23 @@
+sudo: required
+dist: bionic
+language: generic
+
+matrix:
+  include:
+   - os: linux
+     arch: amd64
+   - os: linux
+     arch: arm64
+
+compiler:
+  - gcc
+
+install:
+  - cd
+  - git clone https://github.com/linorobot/ros2me
+  - cd ros2me
+  - sudo ./install
+
+notifications:
+  email:
+    - jimenojmm@gmail.com

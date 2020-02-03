@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+set -e
+
+ARCH=$(uname -i)
+RELEASE=$(lsb_release -c -s)
+
+if [ $RELEASE == "xenial" ]
+    then
+        ROSDISTRO=ardent
+       
+elif [ $RELEASE == "bionic" ]
+    then
+        ROSDISTRO=crystal
+fi
+
+sudo locale-gen en_US en_US.UTF-8
+sudo update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
+export LANG=en_US.UTF-8
+
+sudo apt update && sudo apt install -y curl gnupg2 lsb-release
+curl http://repo.ros2.org/repos.key | sudo apt-key add -
+
+sudo sh -c 'echo "deb [arch=amd64,arm64] http://packages.ros.org/ros2/ubuntu `lsb_release -cs` main" > /etc/apt/sources.list.d/ros2-latest.list'
+sudo apt update
+
+if [ $ARCH == "x86_64" ]
+    then
+	sudo apt install -y ros-$ROSDISTRO-desktop
+    echo "Installing ROS2 Full Desktop Version"
+else  
+    sudo apt install -y ros-$ROSDISTRO-ros-base
+    echo "Installing ROS2 Barebones"
+fi
+
+sudo apt install -y python3-argcomplete
+
+echo "alias ros2=\"source /opt/ros/$ROSDISTRO/setup.bash\"" >> ~/.bashrc
+source ~/.bashrc 
+
