@@ -11,7 +11,7 @@ if [ $RELEASE == "xenial" ]
        
 elif [ $RELEASE == "bionic" ]
     then
-        ROSDISTRO=crystal
+        ROSDISTRO=eloquent
 fi
 
 sudo locale-gen en_US en_US.UTF-8
@@ -31,6 +31,15 @@ if [ $ARCH == "x86_64" ]
 else  
     sudo apt install -y ros-$ROSDISTRO-ros-base
     echo "Installing ROS2 Barebones"
+fi
+
+if [ $ROSDISTRO == "ardent" ]
+    then
+        sudo apt install ros-ardent-arment*
+       
+elif [ $ROSDISTRO == "eloquent" ]
+    then
+        sudo apt install python3-colcon-common-extensions
 fi
 
 sudo apt install -y python3-argcomplete
