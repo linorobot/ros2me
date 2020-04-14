@@ -35,7 +35,7 @@ fi
 
 if [ $ROSDISTRO == "ardent" ]
     then
-        sudo apt install ros-ardent-arment*
+        sudo apt install ros-ardent-ament*
        
 elif [ $ROSDISTRO == "eloquent" ]
     then
