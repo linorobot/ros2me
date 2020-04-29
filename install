@@ -44,6 +44,6 @@ fi
 
 sudo apt install -y python3-argcomplete
 
-echo "alias ros2=\"source /opt/ros/$ROSDISTRO/setup.bash\"" >> ~/.bashrc
+echo "alias helloros2=\"source /opt/ros/$ROSDISTRO/setup.bash\"" >> ~/.bashrc
 source ~/.bashrc 
 
