@@ -5,45 +5,65 @@ set -e
 ARCH=$(uname -i)
 RELEASE=$(lsb_release -c -s)
 
-if [ $RELEASE == "xenial" ]
-    then
-        ROSDISTRO=ardent
-       
-elif [ $RELEASE == "bionic" ]
+eloquentx86_64=https://github.com/ros2/ros2/releases/download/release-eloquent-2020-1212/ros2-eloquent-20201212-linux-bionic-amd64.tar.bz2
+eloquentaarch64=https://github.com/ros2/ros2/releases/download/release-eloquent-2020-1212/ros2-eloquent-20201212-linux-bionic-arm64.tar.bz2        
+foxyx86_64=https://github.com/ros2/ros2/releases/download/release-foxy-20201211/ros2-foxy-20201211-linux-focal-amd64.tar.bz2
+foxyaarch64=https://github.com/ros2/ros2/releases/download/release-foxy-20201211/ros2-foxy-20201211-linux-focal-arm64.tar.bz2
+
+if [ $RELEASE == "bionic" ]
     then
         ROSDISTRO=eloquent
+
+elif [ $RELEASE == "focal" ]
+    then
+        ROSDISTRO=foxy
+else
+    echo "$RELEASE OS Release not supported. Exiting now"
+    exit
 fi
 
-sudo locale-gen en_US en_US.UTF-8
-sudo update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
-export LANG=en_US.UTF-8
+if [ $ARCH != "x86_64" ] && [ $ARCH != "aarch64" ]
+    then
+        echo "$ARCH architecture not supported. Exiting now"
+        exit
+fi
 
+RELEASE_FILE=$ROSDISTRO$ARCH
+
+# Add the ROS 2 apt repository
 sudo apt update && sudo apt install -y curl gnupg2 lsb-release
-curl http://repo.ros2.org/repos.key | sudo apt-key add -
+sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key  -o /usr/share/keyrings/ros-archive-keyring.gpg
 
-sudo sh -c 'echo "deb [arch=amd64,arm64] http://packages.ros.org/ros2/ubuntu `lsb_release -cs` main" > /etc/apt/sources.list.d/ros2-latest.list'
+# Add repository to sources list
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
+
+# Download ROS2
+echo "Downloading $ROSDISTRO-$ARCH release from github. This may take a while ..."
+cd /tmp
+curl -sSL ${!RELEASE_FILE} -o ros-$ROSDISTRO-$ARCH.tar.bz2
+
+mkdir -p ~/ros2_$ROSDISTRO
+cd ~/ros2_$ROSDISTRO
+tar xf /tmp/ros-$ROSDISTRO-$ARCH.tar.bz2
+
+echo "Installing ROS $ROSDISTRO on $ARCH architecture"
+
+# Install and initialize rosdep
 sudo apt update
+sudo apt install -y python3-rosdep
+sudo rosdep init
+rosdep update
 
-if [ $ARCH == "x86_64" ]
+# Install missing dependencies
+if [ $ROSDISTRO == "eloquent" ]
     then
-	sudo apt install -y ros-$ROSDISTRO-desktop
-    echo "Installing ROS2 Full Desktop Version"
-else  
-    sudo apt install -y ros-$ROSDISTRO-ros-base
-    echo "Installing ROS2 Barebones"
-fi
-
-if [ $ROSDISTRO == "ardent" ]
-    then
-        sudo apt install ros-ardent-ament*
+        rosdep install --from-paths ~/ros2_foxy/ros2-linux/share --ignore-src --rosdistro eloquent -y --skip-keys "console_bridge fastcdr fastrtps libopensplice67 libopensplice69 osrf_testing_tools_cpp poco_vendor rmw_connext_cpp rosidl_typesupport_connext_c rosidl_typesupport_connext_cpp rti-connext-dds-5.3.1 tinyxml_vendor tinyxml2_vendor urdfdom urdfdom_headers"
        
-elif [ $ROSDISTRO == "eloquent" ]
+elif [ $ROSDISTRO == "foxy" ]
     then
-        sudo apt install python3-colcon-common-extensions
+        rosdep install --from-paths ~/ros2_foxy/ros2-linux/share --ignore-src --rosdistro foxy -y --skip-keys "console_bridge fastcdr fastrtps osrf_testing_tools_cpp poco_vendor rmw_connextdds rti-connext-dds-5.3.1 tinyxml_vendor tinyxml2_vendor urdfdom urdfdom_headers"
 fi
 
-sudo apt install -y python3-argcomplete
-
-echo "alias helloros2=\"source /opt/ros/$ROSDISTRO/setup.bash\"" >> ~/.bashrc
-source ~/.bashrc 
-
+# Install python3 libraries
+sudo apt install -y libpython3-dev python3-pip
+pip3 install -U argcomplete
