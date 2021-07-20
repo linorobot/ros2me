@@ -43,8 +43,8 @@ echo "Downloading $ROSDISTRO-$ARCH release from github. This may take a while ..
 cd /tmp
 curl -sSL ${!RELEASE_FILE} -o ros-$ROSDISTRO-$ARCH.tar.bz2
 
-mkdir -p ~/ros2_$ROSDISTRO
-cd ~/ros2_$ROSDISTRO
+mkdir -p $HOME/ros2_$ROSDISTRO
+cd $HOME/ros2_$ROSDISTRO
 tar xf /tmp/ros-$ROSDISTRO-$ARCH.tar.bz2
 
 echo "Installing ROS $ROSDISTRO on $ARCH architecture"
@@ -58,11 +58,11 @@ rosdep update
 # Install missing dependencies
 if [ $ROSDISTRO == "eloquent" ]
     then
-        rosdep install --from-paths ~/ros2_$ROSDISTRO/ros2-linux/share --ignore-src --rosdistro $ROSDISTRO -y --skip-keys "console_bridge fastcdr fastrtps libopensplice67 libopensplice69 osrf_testing_tools_cpp poco_vendor rmw_connext_cpp rosidl_typesupport_connext_c rosidl_typesupport_connext_cpp rti-connext-dds-5.3.1 tinyxml_vendor tinyxml2_vendor urdfdom urdfdom_headers"
+        rosdep install --from-paths $HOME/ros2_$ROSDISTRO/ros2-linux/share --ignore-src --rosdistro $ROSDISTRO -y --skip-keys "console_bridge fastcdr fastrtps libopensplice67 libopensplice69 osrf_testing_tools_cpp poco_vendor rmw_connext_cpp rosidl_typesupport_connext_c rosidl_typesupport_connext_cpp rti-connext-dds-5.3.1 tinyxml_vendor tinyxml2_vendor urdfdom urdfdom_headers"
 
 elif [ $ROSDISTRO == "foxy" ]
     then
-        rosdep install --from-paths ~/ros2_$ROSDISTRO/ros2-linux/share --ignore-src --rosdistro $ROSDISTRO -y --skip-keys "console_bridge fastcdr fastrtps osrf_testing_tools_cpp poco_vendor rmw_connextdds rti-connext-dds-5.3.1 tinyxml_vendor tinyxml2_vendor urdfdom urdfdom_headers"
+        rosdep install --from-paths $HOME/ros2_$ROSDISTRO/ros2-linux/share --ignore-src --rosdistro $ROSDISTRO -y --skip-keys "console_bridge fastcdr fastrtps osrf_testing_tools_cpp poco_vendor rmw_connextdds rti-connext-dds-5.3.1 tinyxml_vendor tinyxml2_vendor urdfdom urdfdom_headers"
 fi
 
 # Install python3 libraries
@@ -74,12 +74,14 @@ echo "ROS $ROSDISTRO installation complete!"
 echo ""
 
 echo "Set up your environment by sourcing the following file."
-echo ". ~/ros2_$ROSDISTRO/ros2-linux/setup.bash"
+echo ". $HOME/ros2_$ROSDISTRO/ros2-linux/setup.bash"
+echo "export RMW_IMPLEMENTATION=rmw_fastrtps_cpp"
 echo ""
 
 echo -n "Or do you want to save this on your .bashrc (y/n)? "
 read answer
 
 if [ "$answer" != "${answer#[Yy]}" ] ;then
-    echo ". ~/ros2_$ROSDISTRO/ros2-linux/setup.bash" >> ~/.bashrc
+    echo ". $HOME/ros2_$ROSDISTRO/ros2-linux/setup.bash" >> $HOME/.bashrc
+    echo "export RMW_IMPLEMENTATION=rmw_fastrtps_cpp" >> $HOME/.bashrc
 fi
