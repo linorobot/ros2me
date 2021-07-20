@@ -7,10 +7,10 @@ sudo apt update && sudo apt install -y curl gnupg2 lsb-release
 ARCH=$(uname -i)
 RELEASE=$(lsb_release -c -s)
 
-eloquentx86_64=https://github.com/ros2/ros2/releases/download/release-eloquent-2020-1212/ros2-eloquent-20201212-linux-bionic-amd64.tar.bz2
-eloquentaarch64=https://github.com/ros2/ros2/releases/download/release-eloquent-2020-1212/ros2-eloquent-20201212-linux-bionic-arm64.tar.bz2        
-foxyx86_64=https://github.com/ros2/ros2/releases/download/release-foxy-20201211/ros2-foxy-20201211-linux-focal-amd64.tar.bz2
-foxyaarch64=https://github.com/ros2/ros2/releases/download/release-foxy-20201211/ros2-foxy-20201211-linux-focal-arm64.tar.bz2
+sudo apt update && sudo apt install locales
+sudo locale-gen en_US en_US.UTF-8
+sudo update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
+export LANG=en_US.UTF-8
 
 if [ $RELEASE == "bionic" ]
     then
@@ -38,32 +38,18 @@ sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key  -
 # Add repository to sources list
 echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
 
-# Download ROS2
-echo "Downloading $ROSDISTRO-$ARCH release from github. This may take a while ..."
-cd /tmp
-curl -sSL ${!RELEASE_FILE} -o ros-$ROSDISTRO-$ARCH.tar.bz2
-
-mkdir -p $HOME/ros2_$ROSDISTRO
-cd $HOME/ros2_$ROSDISTRO
-tar xf /tmp/ros-$ROSDISTRO-$ARCH.tar.bz2
-
 echo "Installing ROS $ROSDISTRO on $ARCH architecture"
-
-# Install and initialize rosdep
 sudo apt update
-sudo apt install -y python3-rosdep
-sudo rosdep init
-rosdep update
 
-# Install missing dependencies
-if [ $ROSDISTRO == "eloquent" ]
+if [ $ARCH == "x86_64" ]
     then
-        rosdep install --from-paths $HOME/ros2_$ROSDISTRO/ros2-linux/share --ignore-src --rosdistro $ROSDISTRO -y --skip-keys "console_bridge fastcdr fastrtps libopensplice67 libopensplice69 osrf_testing_tools_cpp poco_vendor rmw_connext_cpp rosidl_typesupport_connext_c rosidl_typesupport_connext_cpp rti-connext-dds-5.3.1 tinyxml_vendor tinyxml2_vendor urdfdom urdfdom_headers"
+        sudo apt install ros-$ROSDISTRO-desktop
 
-elif [ $ROSDISTRO == "foxy" ]
+elif [ $ARCH == "aarch64" ]
     then
-        rosdep install --from-paths $HOME/ros2_$ROSDISTRO/ros2-linux/share --ignore-src --rosdistro $ROSDISTRO -y --skip-keys "console_bridge fastcdr fastrtps osrf_testing_tools_cpp poco_vendor rmw_connextdds rti-connext-dds-5.3.1 tinyxml_vendor tinyxml2_vendor urdfdom urdfdom_headers"
+        sudo apt install ros-$ROSDISTRO-ros-base
 fi
+
 
 # Install python3 libraries
 sudo apt install -y libpython3-dev python3-pip
@@ -74,14 +60,15 @@ echo "ROS $ROSDISTRO installation complete!"
 echo ""
 
 echo "Set up your environment by sourcing the following file."
-echo ". $HOME/ros2_$ROSDISTRO/ros2-linux/setup.bash"
+echo "source /opt/ros/$ROSDISTRO/setup.bash"
 echo "export RMW_IMPLEMENTATION=rmw_fastrtps_cpp"
 echo ""
 
 echo -n "Or do you want to save this on your .bashrc (y/n)? "
 read answer
 
-if [ "$answer" != "${answer#[Yy]}" ] ;then
-    echo ". $HOME/ros2_$ROSDISTRO/ros2-linux/setup.bash" >> $HOME/.bashrc
-    echo "export RMW_IMPLEMENTATION=rmw_fastrtps_cpp" >> $HOME/.bashrc
+if [ "$answer" != "${answer#[Yy]}" ] ;
+    then
+        echo "source /opt/ros/$ROSDISTRO/setup.bash" >> $HOME/.bashrc
+        echo "export RMW_IMPLEMENTATION=rmw_fastrtps_cpp" >> $HOME/.bashrc
 fi
