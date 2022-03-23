@@ -18,7 +18,7 @@ if [ $RELEASE == "bionic" ]
 
 elif [ $RELEASE == "focal" ]
     then
-        ROSDISTRO=foxy
+        ROSDISTRO=galactic
 else
     echo "$RELEASE OS Release not supported. Exiting now"
     exit
