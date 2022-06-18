@@ -8,6 +8,7 @@ ARCH=$(uname -i)
 RELEASE=$(lsb_release -c -s)
 
 sudo apt update && sudo apt install locales
+
 sudo locale-gen en_US en_US.UTF-8
 sudo update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
 export LANG=en_US.UTF-8
@@ -45,6 +46,9 @@ echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-a
 
 echo "Installing ROS $ROSDISTRO on $ARCH architecture"
 sudo apt update
+
+sudo apt install python3-colcon-core
+sudo apt install python3-colcon-common-extensions
 
 if [ $ARCH == "x86_64" ]
     then
