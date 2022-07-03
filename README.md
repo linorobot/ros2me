@@ -3,8 +3,8 @@ ROS 2 installation files. This will automatically detect your Ubuntu Release and
 
 Works on:
 - Ubuntu 18.04 - ROS Eloquent Elusor
-- Ubuntu 20.04 - ROS Foxy Fitzroy
-- Ubuntu 20.04 - ROS Humble Hawksbill
+- Ubuntu 20.04 - ROS Foxy Galactic
+- Ubuntu 22.04 - ROS Humble Hawksbill
 
 Installs ros-$DISTRO-base (barebones) on non X86 machines.
 
