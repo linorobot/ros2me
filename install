@@ -86,3 +86,5 @@ if [ "$answer" != "${answer#[Yy]}" ] ;
     then
         echo "source /opt/ros/$ROSDISTRO/setup.bash" >> $HOME/.bashrc
 fi
+
+echo "Installation done! To start using ROS2, run: source $HOME/.bashrc"
