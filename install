@@ -25,6 +25,10 @@ elif [ $RELEASE == "jammy" ]
     then
         ROSDISTRO=humble
 
+elif [ $RELEASE == "noble" ]
+    then
+        ROSDISTRO=jazzy
+
 else
     echo "$RELEASE OS Release not supported. Exiting now"
     exit
@@ -64,7 +68,7 @@ sudo apt install -y libpython3-dev python3-pip
 pip3 install -U argcomplete pytest-rerunfailures
 
 # Remove conflicting em package
-pip3 uninstall em
+pip3 uninstall -y em
 
 sudo rosdep init
 rosdep update

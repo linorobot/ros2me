@@ -1,0 +1,36 @@
+name: Weekly Install Check
+
+on:
+  schedule:
+    - cron: '0 0 * * 0'  # Every Sunday at midnight UTC
+  workflow_dispatch:
+
+jobs:
+  check:
+    name: ${{ matrix.rosdistro }} on ${{ matrix.arch }}
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - rosdistro: humble
+            runner: ubuntu-22.04
+            arch: amd64
+
+          - rosdistro: humble
+            runner: ubuntu-22.04-arm
+            arch: arm64
+
+          - rosdistro: jazzy
+            runner: ubuntu-24.04
+            arch: amd64
+
+          - rosdistro: jazzy
+            runner: ubuntu-24.04-arm
+            arch: arm64
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run install script
+        run: echo "n" | sudo bash ./install
