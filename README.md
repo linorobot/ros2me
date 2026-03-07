@@ -5,6 +5,7 @@ Works on:
 - Ubuntu 18.04 - ROS Eloquent Elusor
 - Ubuntu 20.04 - ROS Galactic Geochelone
 - Ubuntu 22.04 - ROS Humble Hawksbill
+- Ubuntu 24.04 - ROS Jazzy  Jalisco
 
 Installs ros-$DISTRO-base (barebones) on non X86 machines.
 
@@ -14,4 +15,3 @@ Run:
 ```
   ./install
 ```
-
