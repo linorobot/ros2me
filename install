@@ -67,7 +67,7 @@ fi
 sudo apt install -y libpython3-dev python3-pip
 if ! sudo apt install -y python3-argcomplete python3-pytest-rerunfailures 2>/dev/null; then
     echo "apt install failed for python3-argcomplete/python3-pytest-rerunfailures, falling back to pip3"
-    pip3 install -U argcomplete pytest-rerunfailures
+    pip3 install -U --ignore-installed argcomplete pytest-rerunfailures
 fi
 
 # Remove conflicting em package
